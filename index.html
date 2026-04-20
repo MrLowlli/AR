@@ -2,26 +2,239 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:," />
+    <title>Libro Bambuco realidad aumentada</title>
+    <link rel="icon" href="data:," />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #2d1c12;
+        background: radial-gradient(circle at top, #fff5d8 0%, #f6d994 42%, #b77435 100%);
+      }
+
+      .intro-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+        text-align: center;
+      }
+
+      .intro-card {
+        width: min(92vw, 430px);
+        padding: 36px 26px 30px;
+        border-radius: 28px;
+        background: rgba(255, 248, 229, 0.88);
+        box-shadow: 0 24px 70px rgba(80, 42, 15, 0.28);
+        backdrop-filter: blur(10px);
+        animation: fadeIn 1.1s ease both;
+        position: relative;
+        z-index: 2;
+      }
+
+      .book-logo {
+        width: min(230px, 70vw);
+        max-height: 230px;
+        object-fit: contain;
+        margin-bottom: 22px;
+        filter: drop-shadow(0 12px 20px rgba(88, 47, 18, 0.24));
+        animation: logoFloat 3.5s ease-in-out infinite;
+      }
+
+      .logo-fallback {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 22px;
+        border-radius: 32px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+        background: linear-gradient(145deg, #fff8e2, #d8994d);
+        box-shadow: inset 0 0 0 3px rgba(97, 56, 21, 0.18), 0 14px 28px rgba(88, 47, 18, 0.22);
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(30px, 8vw, 44px);
+        line-height: 1.05;
+      }
+
+      .intro-text {
+        min-height: 48px;
+        margin: 0 0 28px;
+        color: #664126;
+        font-size: 18px;
+        line-height: 1.45;
+        animation: fadeInUp 1.1s ease 0.45s both;
+      }
+
+      .start-button,
+      .back-button {
+        border: 0;
+        cursor: pointer;
+        font-weight: 700;
+        font-family: inherit;
+      }
+
+      .start-button {
+        display: block;
+        width: 100%;
+        padding: 17px 22px;
+        border-radius: 999px;
+        color: #fff9ea;
+        background: linear-gradient(135deg, #8b3f18, #d9792f);
+        box-shadow: 0 14px 28px rgba(137, 63, 24, 0.32);
+        font-size: 17px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        animation: fadeInUp 0.8s ease 0.35s both;
+      }
+
+      .start-button:active {
+        transform: scale(0.98);
+        box-shadow: 0 8px 18px rgba(137, 63, 24, 0.28);
+      }
+
+      .ar-screen {
+        position: fixed;
+        inset: 0;
+        background: #000;
+      }
+
+      .ar-container,
+      .ar-scene {
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .back-button {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        z-index: 10;
+        transform: translateX(-50%);
+        padding: 10px 16px;
+        border-radius: 999px;
+        color: #3f2818;
+        background: rgba(255, 248, 229, 0.92);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+        font-size: 13px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.96);
+        }
+
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes logoFloat {
+        0%, 100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Libro Bambuco realidad aumentada</h1>
-    <p>Estamos organizando todo para que se vea perfecto en el preview</p>
+    <main id="introScreen" class="intro-screen">
+      <section class="intro-card">
+        <img id="bookLogo" class="book-logo" src="logo-libro.png" alt="Logo del libro" />
+        <div id="logoFallback" class="logo-fallback" aria-hidden="true">📖</div>
+        <h1>Libro Bambuco</h1>
+        <p class="intro-text">Texto inicial pendiente. Aquí podrás escribir una frase corta para invitar a vivir la experiencia.</p>
+        <button id="startButton" class="start-button" type="button">Inicia tu experiencia aquí</button>
+      </section>
+    </main>
 
-    <a-scene mindar-image="imageTargetSrc: CasaCampesina.mind; filterMinCF: 0.0001; filterBeta: 1000;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-      <a-assets>
-        <a-asset-item id="danceModel" src="Dance_2_lowpo.glb"></a-asset-item>
-      </a-assets>
+    <section id="arScreen" class="ar-screen hidden" aria-label="Experiencia de realidad aumentada">
+      <div id="arContainer" class="ar-container"></div>
+      <button id="backButton" class="back-button" type="button">Volver al inicio</button>
+    </section>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <template id="arSceneTemplate">
+      <a-scene class="ar-scene" embedded mindar-image="imageTargetSrc: CasaCampesina.mind; filterMinCF: 0.0001; filterBeta: 2000;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        <a-assets>
+          <a-asset-item id="danceModel" src="Dance_2_lowpo.glb"></a-asset-item>
+        </a-assets>
 
-      <a-entity mindar-image-target="targetIndex: 0">
-        <a-gltf-model src="#danceModel" position="0 -0.5 0" rotation="0 0 0" scale="0.4 0.4 0.4" animation-mixer="clip: *; loop: repeat"></a-gltf-model>
-      </a-entity>
-    </a-scene>
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0">
+          <a-gltf-model src="#danceModel" position="0 -0.5 0" rotation="0 0 0" scale="0.7 0.7 0.7" animation-mixer="clip: *; loop: repeat"></a-gltf-model>
+        </a-entity>
+      </a-scene>
+    </template>
+
+    <script>
+      const introScreen = document.getElementById("introScreen");
+      const arScreen = document.getElementById("arScreen");
+      const arContainer = document.getElementById("arContainer");
+      const arSceneTemplate = document.getElementById("arSceneTemplate");
+      const startButton = document.getElementById("startButton");
+      const backButton = document.getElementById("backButton");
+      const bookLogo = document.getElementById("bookLogo");
+      const logoFallback = document.getElementById("logoFallback");
+
+      bookLogo.addEventListener("error", () => {
+        bookLogo.classList.add("hidden");
+        logoFallback.style.display = "flex";
+      });
+
+      function startExperience() {
+        introScreen.classList.add("hidden");
+        arScreen.classList.remove("hidden");
+        arContainer.innerHTML = arSceneTemplate.innerHTML;
+      }
+
+      function stopExperience() {
+        const scene = arContainer.querySelector("a-scene");
+        const mindarSystem = scene && scene.systems && scene.systems["mindar-image-system"];
+
+        if (mindarSystem) {
+          mindarSystem.stop();
+        }
+
+        arContainer.innerHTML = "";
+        arScreen.classList.add("hidden");
+        introScreen.classList.remove("hidden");
+      }
+
+      startButton.addEventListener("click", startExperience);
+      backButton.addEventListener("click", stopExperience);
+    </script>
   </body>
 </html>
-
