@@ -1,29 +1,33 @@
-<html>
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mi prueba de realidad aumentada</title>
+    <link rel="icon" href="data:," />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
   </head>
   <body>
-    <h1>AR_libro</h1>
-    <p>Estamos organizando todo para que se vea correctamente tu preview</p>
+    <h1>Mi prueba de realidad aumentada</h1>
+    <p>Si ves este texto, el HTML está cargando correctamente. La escena de abajo usa la misma imagen base y carga tus dos modelos GLB.</p>
 
     <a-scene mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
-  <img id="card" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.png" />
-  <a-asset-item id="ninoA" src="ninoA_static.glb"></a-asset-item>
+        <img id="card" crossorigin="anonymous" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.png" />
+        <a-asset-item id="danceModel" src="Dance_2_lowpo.glb"></a-asset-item>
+        <a-asset-item id="ninoModel" src="ninoA_static.glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-sphere position="0 0 0" radius="0.25" color="#EF2D5E"></a-sphere>
-        <a-gltf-model rotation="0 0 0 " position="0 0 0" scale="0.05 0.05 0.05" src="#ninoA"
-          animation-mixer
-        ></a-gltf-model>
+        <a-plane src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane>
+
+        <a-gltf-model src="#danceModel" position="-0.28 0 0.12" rotation="0 0 0" scale="0.15 0.15 0.15" animation-mixer="clip: *; loop: repeat"></a-gltf-model>
+
+        <a-gltf-model src="#ninoModel" position="0.28 0 0.12" rotation="0 0 0" scale="0.15 0.15 0.15"></a-gltf-model>
       </a-entity>
     </a-scene>
   </body>
-</html> 
+</html>
